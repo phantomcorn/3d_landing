@@ -22,16 +22,17 @@ function App() {
       'pz.png',
       'nz.png'], (texture) => {
 
-      // var skyGeometry = new THREE.BoxGeometry( 2000, 2000, 2000 );
+      // var skyGeometry = new THREE.BoxGeometry( 1000, 1000, 1000 );
       // var skyMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff, envMap: texture, side: THREE.DoubleSide});
       // var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
 	    // test.scene.add( skyBox );
+      test.scene.background = texture;
     });
 
     var tileLoader = new THREE.TextureLoader();
     tileLoader.setPath("./tile/")
 
-    var box = new THREE.BoxGeometry(5000,50,5000);
+    var box = new THREE.PlaneGeometry(50,50);
     var mat = new THREE.MeshStandardMaterial();
 
     tileLoader.load('normalMap.png', (texture) => mat.normalMap = texture);
@@ -41,10 +42,10 @@ function App() {
     tileLoader.load('height.png', (texture) => mat.displacementMap = texture)
     // mat.displacementScale = 2.0;
     // mat.wireframe = true;
-    
-
+    mat.side = THREE.DoubleSide;
     var mesh = new THREE.Mesh(box,mat);
-    mesh.position.y =- 160;
+    mesh.rotateX(-Math.PI/2);
+    // mesh.position.y =- 5;
     test.scene.add(mesh);
   }) 
 

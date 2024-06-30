@@ -11,7 +11,7 @@ const FresnelShader = {
 		"mRefractionRatio": { type: "f", value: 1.02 },
 		"mFresnelBias": { type: "f", value: 0.1 },
 		"mFresnelPower": { type: "f", value: 2.0 },
-		"mFresnelScale": { type: "f", value: 1.0 },
+		"mFresnelScale": { type: "f", value: 0.5 },
 		"tCube": { type: "t", value: null }
 
 	},

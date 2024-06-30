@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
 import FresnelShader from "./../shaders/FresnelShader.js"
+import * as dat from 'dat.gui';
+
+
 
 export default class SceneInit {
     
@@ -17,10 +20,14 @@ export default class SceneInit {
         
         this.rSCamera = undefined;
         this.sphere = undefined;
+
+        this.gui = undefined;
     }
     
     init() {
+
         this.scene = new THREE.Scene()
+        this.gui = new dat.GUI();
 
         const canvas = document.getElementById("myThreeJsCanvas");
         this.renderer = new THREE.WebGLRenderer( {canvas, antialias: true} );
@@ -29,7 +36,7 @@ export default class SceneInit {
         document.body.appendChild(this.renderer.domElement);
 
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 20000)
-        this.camera.position.set(0,150,400);
+        this.camera.position.set(0,20,50);
         this.camera.lookAt(this.scene.position)
 
         window.addEventListener('resize', () => this.onWindowResize(), false);
@@ -37,6 +44,7 @@ export default class SceneInit {
         this.addLight()
         this.addBubble()
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+       
     }
 
     addLight() {
@@ -49,15 +57,15 @@ export default class SceneInit {
         // this.scene.add(this.directionalLight);
         // this.scene.add(this.dlHelper);
 
-        // var light = new THREE.PointLight(0xffffff);
-        // light.castShadow = true;
-        // light.position.set(0,250,0);
-        // this.scene.add(light);
+        var light = new THREE.PointLight(0xffffff);
+        light.castShadow = true;
+        light.position.set(0,250,0);
+        this.scene.add(light);
 
     }
 
     addBubble() {
-        const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(512, {
+        const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(1024, {
             format: THREE.RGBAFormat,
             generateMipmaps: true,
             minFilter: THREE.LinearMipmapLinearFilter
@@ -66,7 +74,7 @@ export default class SceneInit {
         this.scene.add(this.rSCamera);
 
         //---------------------------Bubble-------------------------
-        const geo = new THREE.SphereGeometry(100,64,32);
+        const geo = new THREE.SphereGeometry(10,64,32,0, Math.PI);
         const fShader = FresnelShader;
 
         const customMaterial = new THREE.ShaderMaterial( 
@@ -77,7 +85,8 @@ export default class SceneInit {
         });
 
         customMaterial.uniforms.tCube.value = this.rSCamera.renderTarget.texture;
-        
+        // customMaterial.side = THREE.DoubleSide;
+
         this.sphere = new THREE.Mesh(geo,customMaterial);
         this.sphere.receiveShadow = true;
         this.sphere.castShadow = true;
@@ -85,19 +94,11 @@ export default class SceneInit {
             this.sphere.position.x,
             this.sphere.position.y,
             this.sphere.position.z
-         )
+        )
+        this.sphere.rotateX(-Math.PI/2)
         this.scene.add(this.sphere);
 
         //-------------------------------------------------------------------
-
-        // console.log(this.rSCamera.position);
-        // console.log(this.sphere.position)
-        // // const cube = new THREE.SphereGeometry(100, 32, 32);
-        // // const mat = new THREE.MeshPhongMaterial({envMap: this.rSCamera.renderTarget.texture })
-        // // const cmesh = new THREE.Mesh(cube, mat);
-        // // cmesh.position.y += 50;
-        // // this.scene.add(cmesh);
-        // // cmesh.add(this.rSCamera);
     }
 
     animate() {
