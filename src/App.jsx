@@ -14,20 +14,44 @@ function App() {
     test.animate()
 
     var loader = new THREE.CubeTextureLoader()
-    loader.load([
-      'px.png',
-      'nx.png',
-      'py.png',
-      'ny.png',
-      'pz.png',
-      'nz.png'], (texture) => {
-
-      // var skyGeometry = new THREE.BoxGeometry( 1000, 1000, 1000 );
-      // var skyMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff, envMap: texture, side: THREE.DoubleSide});
-      // var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
-	    // test.scene.add( skyBox );
-      test.scene.background = texture;
+    var path	= "./"
+    var format	= '.jpg'
+    var urls	= [
+      path + 'px' + format, path + 'nx' + format,
+      path + 'py' + format, path + 'ny' + format,
+      path + 'pz' + format, path + 'nz' + format
+    ]
+	  loader.load(urls, (textureCube) => {
+      // textureCube.format = THREE.RGBFormat
+      const shader	= THREE.ShaderLib[ "cube" ];
+      shader.uniforms[ "tCube" ].value = textureCube;
+      const material	= new THREE.ShaderMaterial( {
+        fragmentShader	: shader.fragmentShader,
+        vertexShader	: shader.vertexShader,
+        uniforms	: shader.uniforms,
+        side		: THREE.BackSide
+      })
+      const geometry	= new THREE.BoxGeometry(5000, 500, 500)
+      const meshSkybox	= new THREE.Mesh(geometry, material);
+      test.scene.add( meshSkybox );
     });
+    
+
+    // loader.load([
+    //   'px.png',
+    //   'nx.png',
+    //   'py.png',
+    //   'ny.png',
+    //   'pz.png',
+    //   'nz.png'], (texture) => {
+
+    //   var skyGeometry = new THREE.BoxGeometry( 1000, 1000, 1000 );
+    //   var skyMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff, envMap: texture, side: THREE.BackSide});
+    //   skyMaterial.
+    //   var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
+	  //   test.scene.add( skyBox );
+    //   // test.scene.background = texture;
+    // });
 
     var tileLoader = new THREE.TextureLoader();
     tileLoader.setPath("./tile/")
@@ -45,7 +69,7 @@ function App() {
     mat.side = THREE.DoubleSide;
     var mesh = new THREE.Mesh(box,mat);
     mesh.rotateX(-Math.PI/2);
-    // mesh.position.y =- 5;
+    mesh.position.y =- 15;
     test.scene.add(mesh);
   }) 
 

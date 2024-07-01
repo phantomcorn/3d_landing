@@ -36,7 +36,7 @@ export default class SceneInit {
         document.body.appendChild(this.renderer.domElement);
 
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 20000)
-        this.camera.position.set(0,20,50);
+        this.camera.position.set(0,20,25);
         this.camera.lookAt(this.scene.position)
 
         window.addEventListener('resize', () => this.onWindowResize(), false);
@@ -50,17 +50,23 @@ export default class SceneInit {
     addLight() {
         this.ambientLight = new THREE.AmbientLight(0xffffff, Math.PI);
         this.scene.add(this.ambientLight);
-        this.directionalLight = new THREE.DirectionalLight(0xffffff);
-        this.directionalLight.castShadow = true;
-        this.directionalLight.position.y = 10;
-        this.dlHelper = new THREE.DirectionalLightHelper(this.directionalLight);
+        // this.directionalLight = new THREE.DirectionalLight('white', 0.75)
+        // this.directionalLight.castShadow = true;
+        // this.directionalLight.set(-0.5,-0.5,-2)
+        // this.dlHelper = new THREE.DirectionalLightHelper(this.directionalLight);
         // this.scene.add(this.directionalLight);
         // this.scene.add(this.dlHelper);
 
-        var light = new THREE.PointLight(0xffffff);
-        light.castShadow = true;
-        light.position.set(0,250,0);
-        this.scene.add(light);
+        var light	= new THREE.DirectionalLight('white', 1)
+		light.position.set(0.5, 0.5, 2)
+		this.scene.add( light )
+        var light	= new THREE.DirectionalLight('white', 0.75)
+		light.position.set(-0.5, -0.5, -2)
+		this.scene.add( light )
+        // var light = new THREE.PointLight(0xffffff);
+        // light.castShadow = true;
+        // light.position.set(0,250,0);
+        // this.scene.add(light);
 
     }
 
@@ -74,14 +80,17 @@ export default class SceneInit {
         this.scene.add(this.rSCamera);
 
         //---------------------------Bubble-------------------------
-        const geo = new THREE.SphereGeometry(10,64,32,0, Math.PI);
+        const geo = new THREE.SphereGeometry(10,64,32)//,0, Math.PI);
         const fShader = FresnelShader;
 
         const customMaterial = new THREE.ShaderMaterial( 
         {
             uniforms: 		THREE.UniformsUtils.clone(fShader.uniforms),
             vertexShader:   fShader.vertexShader,
-            fragmentShader: fShader.fragmentShader
+            fragmentShader: fShader.fragmentShader,
+            // transparent: true,
+            // opacity: 0.5
+       
         });
 
         customMaterial.uniforms.tCube.value = this.rSCamera.renderTarget.texture;
